@@ -1,0 +1,3 @@
+[deps]
+Discord = "e67e5439-1494-44b2-b9ab-d191a16377ec"
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
