@@ -12,16 +12,24 @@ function api_call(c, method, path, Into=Nothing, params=Dict();  kwargs...)
         "User-Agent" => USER_AGENT,
         "X-RateLimit-Precision" => "millisecond",
     ]
+
     body, query = if method in (:PATCH, :PUT, :POST)
         push!(headers, "Content-Type" => "application/json")
         (isempty(kwargs) ? "" : JSON3.write(kwargs)), params
     else
         "", kwargs
     end
+
     url = "$API_BASE/v$API_VERSION$path"
-    check_rate_limits(rate_limiter(c), url)
+    if check_rate_limits(rate_limiter(c), path) === RATE_LIMIT_SENTINEL
+        return RATE_LIMIT_SENTINEL
+    end
+
     resp = request(method, url, headers, body; query=query, status_exception=false)
-    apply_rate_limits!(rate_limiter(c), resp)
+    if apply_rate_limits!(rate_limiter(c), resp) === RATE_LIMIT_SENTINEL
+        return RATE_LIMIT_SENTINEL
+    end
+
     if 200 <= resp.status < 300
         return parse_response(resp, Into)
     else

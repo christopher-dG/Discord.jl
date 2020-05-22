@@ -1,4 +1,7 @@
 const GLOBAL_BUCKET = string(gensym(:global_bucket))
+const RATE_LIMIT_SENTINEL = gensym(:rate_limited)
+
+@enum RateLimitHandler THROW WAIT SENTINEL
 
 mutable struct Bucket
     limit::Int
@@ -11,8 +14,9 @@ end
 struct RateLimiter
     buckets::Dict{String, Bucket}
     routes::Dict{String, String}
+    handler::RateLimitHandler
 
-    RateLimiter() = new(Dict(GLOBAL_BUCKET => Bucket()), Dict())
+    RateLimiter(handler=WAIT) = new(Dict(), Dict(), handler)
 end
 
 struct RateLimitedError <: Exception
@@ -22,20 +26,36 @@ end
 
 RateLimitedError(reset) = RateLimitedError(reset, nothing)
 
-function check_rate_limits(rl, url)
-    path = URI(url).path
-    if haskey(rl.routes, path)
-        bucket = rl.buckets[rl.routes[path]]
-        if bucket.remaining == 0 && now(UTC) < bucket.reset
-            throw(RateLimitedError(bucket.reset))
-        end
+on_rate_limit(rl::RateLimiter, reset, resp=nothing) =
+    on_rate_limit(Val(rl.handler), reset, resp)
+on_rate_limit(::Val{THROW}, reset, resp) = throw(RateLimitedError(reset, resp))
+on_rate_limit(::Val{WAIT}, reset, resp) = sleep(max(Millisecond(0), reset - now(UTC)))
+on_rate_limit(::Val{SENTINEL}, reset, resp) = RATE_LIMIT_SENTINEL
+
+function getbucket(rl::RateLimiter, path)
+    return if haskey(rl.routes, path)
+        rl.buckets[rl.routes[path]]
+    else
+        nothing
+    end
+end
+
+getbucket!(rl::RateLimiter, key) = get!(Bucket, rl.buckets, key)
+setpathkey!(rl::RateLimiter, path, key) = rl.routes[path] = key
+
+function check_rate_limits(rl, path)
+    bucket = getbucket(rl, path)
+    if bucket !== nothing && bucket.remaining == 0 && now(UTC) < bucket.reset
+        return on_rate_limit(rl, bucket.reset)
     end
 end
 
 function apply_rate_limits!(rl, resp)
     # TODO: I'm almost 100% sure that this isn't entirely correct.
     # The documentation is incredibly unclear.
-    path = URI(resp.request.target).path
+
+    # Remove the /api/vN prefix.
+    path = resp.request.target[8:end]
     is_global = header(resp, "X-RateLimit-Global") == "true"
     key = if is_global
         GLOBAL_BUCKET
@@ -46,17 +66,17 @@ function apply_rate_limits!(rl, resp)
         m === nothing ? bucket_key : "$bucket_key-$(m[1])"
     end
 
-    bucket = get!(Bucket, rl.buckets, key)
+    bucket = getbucket!(rl, key)
     seconds = parse(Float64, header(resp, "X-RateLimit-Reset"))
     bucket.reset = unix2datetime(seconds)
     bucket.limit = parse(Int, header(resp, "X-RateLimit-Limit"))
     bucket.remaining = parse(Int, header(resp, "X-RateLimit-Remaining"))
 
     if key != GLOBAL_BUCKET
-        rl.routes[path] = key
+        setpathkey!(rl, path, key)
     end
 
     if resp.status == 429
-        throw(RateLimitedError(bucket.reset, resp))
+        return on_rate_limit(rl, bucket.reset, resp)
     end
 end

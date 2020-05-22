@@ -1,24 +1,21 @@
-abstract type AbstractToken end
-Base.show(io::IO, ::AbstractToken) = print(io, "<token>")
-
-struct BotToken <: AbstractToken
+struct Token
     token::String
 end
 
-abstract type AbstractClient end
+Base.show(io::IO, ::Token) = print(io, "<token>")
 
-struct BotClient <: AbstractClient
-    token::BotToken
+struct BotClient
+    token::Token
     rate_limiter::RateLimiter
 
-    BotClient(token) = new(BotToken(token), RateLimiter())
+    BotClient(token; rate_limiter=RateLimiter()) = new(Token(token), rate_limiter)
 end
 
-struct BearerClient <: AbstractClient
-    token::BotClient
+struct BearerClient
+    token::Token
     rate_limiter::RateLimiter
 
-    BearerClient(token) = new(BotToken(token), RateLimiter())
+    BearerClient(token; rate_limiter=RateLimiter()) = new(Token(token), rate_limiter)
 end
 
 auth_header(c::BotClient) = "Bot $(c.token.token)"
