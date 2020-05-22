@@ -42,7 +42,7 @@ function apply_rate_limits!(rl, resp)
     else
         bucket_key = header(resp, "X-RateLimit-Bucket")
         isempty(bucket_key) && return
-        m = match(r"^/api/v\d/(?:channels|guilds|webhooks)/(\d+)", @show path)
+        m = match(r"^/api/v\d/(?:channels|guilds|webhooks)/(\d+)", path)
         m === nothing ? bucket_key : "$bucket_key-$(m[1])"
     end
 

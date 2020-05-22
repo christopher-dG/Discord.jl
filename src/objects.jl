@@ -1,8 +1,11 @@
 module A
 struct Null end
 end
+
 StructTypes.StructType(::Type{A.Null}) = StructTypes.NullType()
 StructTypes.construct(::Type{A.Null}, ::Nothing) = nothing
+Base.convert(::Type{Union{A.Null, Snowflake}}, s::AbstractString) = Snowflake(s)
+Base.convert(::Type{Union{A.Null, Snowflake}}, n::Integer) = Snowflake(n)
 
 function json(x)
     data = Dict{Symbol, Any}()
