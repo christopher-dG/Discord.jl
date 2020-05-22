@@ -1,3 +1,9 @@
+module A
+struct Null end
+end
+StructTypes.StructType(::Type{A.Null}) = StructTypes.NullType()
+StructTypes.construct(::Type{A.Null}, ::Nothing) = nothing
+
 function json(x)
     data = Dict{Symbol, Any}()
     for name in propertynames(x)
@@ -18,14 +24,13 @@ macro discord_object(typedef)
     for (i, field) in enumerate(fields)
         if field isa Expr
             type = field.args[2]
-            field.args[2] = :(Union{$type, Nothing, Missing})
+            field.args[2] = :(Union{$type, A.Null, Nothing, Missing})
             fields[i] = :($field = missing)
         end
     end
     typedef_withkw = esc(:(@with_kw $typedef))
 
     # Enable JSON IO for the type.
-    # TODO: Figure out how to get nulls to deserialize into `nothing`.
     name = esc(typedef.args[2])
     json_methods = quote
         StructTypes.StructType(::Type{$name}) = StructTypes.Mutable()

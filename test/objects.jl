@@ -8,9 +8,9 @@ end
 T = getfield(D, name)
 @test fieldnames(T) == (:a, :b, :c)
 @test fieldtypes(T) == (
-    Union{D.Snowflake, Nothing, Missing},
-    Union{Int, Nothing, Missing},
-    Union{String, Nothing, Missing},
+    Union{D.Snowflake, D.A.Null, Nothing, Missing},
+    Union{Int, D.A.Null, Nothing, Missing},
+    Union{String, D.A.Null, Nothing, Missing},
 )
 
 x = T()
@@ -22,5 +22,5 @@ x = JSON3.read("""{"b":10}""", T)
 @test x.a === missing && x.b == 10 && x.c === missing
 @test JSON3.write(x) == """{"b":10}"""
 x = JSON3.read("""{"b":null}""", T)
-@test_broken x.a === missing && x.b === nothing && x.c === missing
-@test_broken JSON3.write(x) == """{"b":null}"""
+@test x.a === missing && x.b === nothing && x.c === missing
+@test JSON3.write(x) == """{"b":null}"""
