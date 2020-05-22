@@ -2,7 +2,7 @@ module Discord
 
 using Dates: DateTime, ISODateTimeFormat
 
-using HTTP: HTTP
+using HTTP: Response, StatusError, escapeuri, header, request
 using JSON3: JSON3, StructTypes
 using Parameters: @with_kw
 
@@ -17,5 +17,14 @@ end
 include("snowflake.jl")
 include("objects.jl")
 include("clients.jl")
+include(joinpath("endpoints", "audit_log.jl"))
+include(joinpath("endpoints", "channel.jl"))
+include(joinpath("endpoints", "emoji.jl"))
+include(joinpath("endpoints", "guild.jl"))
+include(joinpath("endpoints", "invite.jl"))
+include(joinpath("endpoints", "user.jl"))
+include(joinpath("endpoints", "voice.jl"))
+include(joinpath("endpoints", "webhook.jl"))
+
 
 end

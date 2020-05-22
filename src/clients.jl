@@ -23,16 +23,37 @@ end
 auth_header(c::BotClient) = "Bot $(c.token.token)"
 auth_header(c::BearerClient) = "Bearer $(c.token.token)"
 
-function make_request(c, method, path, Into; body="", query=Dict(), kwargs...)
+function api_call(c, method, path, Into=Nothing;  kwargs...)
     headers = ["Authorization" => auth_header(c), "User-Agent" => USER_AGENT]
-    isempty(body) || push!(headers, "Content-Type" => "application/json")
-    url = "$API_BASE/v$API_VERSION$path"
-    resp = HTTP.request(method, url, headers, body; query=query, status_exception=false)
-    if resp.status in 200:299
-        obj = JSON3.read(resp.body, Into)
-        fix_datetimes!(obj)
-        return obj
+    body, query = if method in (:PATCH, :PUT, :POST)
+        push!(headers, "Content-Type" => "application/json")
+        (isempty(kwargs) ? "" : JSON3.write(kwargs)), Dict()
     else
+        "", kwargs
+    end
+    url = "$API_BASE/v$API_VERSION$path"
+    resp = request(method, url, headers, body; query=query, status_exception=false)
+    # TODO: Apply rate limits.
+    if resp.status in 200:299
+        return parse_response(resp, Into)
+    elseif resp.status == 429
+        # TODO: throw some kind of RateLimitedException.
+        @error "Rate limited"
+    else
+        throw(StatusError(resp.status, resp))
+    end
+end
+
+parse_response(resp::Response, ::Type{Nothing}) = nothing
+function parse_response(resp::Response, Into)
+    return if resp.status == 204
+        nothing
+    elseif header(resp, "Content-Type") == "application/json"
+        x = JSON3.read(resp.body, Into)
+        fix_datetimes!(x)
+        x
+    else
+        resp.body
     end
 end
 

@@ -7,4 +7,10 @@
     target_user_type::TargetUserType
     approximate_presence_count::Int
     approximate_member_count::Int
+    # https://discord.com/developers/docs/resources/invite#invite-metadata-object
+    uses::Int
+    max_uses::Int
+    max_age::Int
+    temporary::Bool
+    created_at::Union{String, DateTime}
 end
