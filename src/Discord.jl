@@ -2,9 +2,9 @@ module Discord
 
 using Base.Iterators: Pairs
 
-using Dates: DateTime, ISODateTimeFormat
+using Dates: DateTime, ISODateTimeFormat, UTC, now, unix2datetime, year
 
-using HTTP: Response, StatusError, escapeuri, header, request
+using HTTP: Response, StatusError, URI, escapeuri, header, request
 using JSON3: JSON3, StructTypes
 using Parameters: @with_kw
 
@@ -18,6 +18,7 @@ end
 
 include("snowflake.jl")
 include("objects.jl")
+include("rate_limiter.jl")
 include("clients.jl")
 include(joinpath("endpoints", "audit_log.jl"))
 include(joinpath("endpoints", "channel.jl"))

@@ -23,7 +23,7 @@ create_guild_member(c, guild, user; kwargs...) =
 update_guild_member(c, guild, user; kwargs...) =
     api_call(c, :PATCH, "/guilds/$guild/members/$user"; kwargs...)
 modify_user_nick(c, guild; kwargs...) =
-    api_call(c, :PATCH, "/guilds/$guild/members/@me/nick", String; kwargs...)
+    api_call(c, :PATCH, "/guilds/$guild/members/@me/nick", UserNickChange; kwargs...)
 create_guild_member_role(c, guild, user, role) =
     api_call(c, :PUT, "/guilds/$guild/users/$user/roles/$role")
 delete_guild_member_role(c, guild, user, role) =

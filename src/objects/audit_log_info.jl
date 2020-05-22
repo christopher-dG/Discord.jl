@@ -1,4 +1,3 @@
-# TODO: Are these numbers really strings?
 @discord_object struct AuditLogInfo
     delete_member_days::String
     members_removed::String

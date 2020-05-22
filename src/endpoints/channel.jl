@@ -9,7 +9,7 @@ get_channel_messages(c, channel; kwargs...) =
 get_channel_message(c, channel, message) =
     api_call(c, :GET, "/channels/$channel/messages/$message", Message)
 create_message(c, channel; kwargs...) =
-    api_call(c, :POST, "/channels/$channel/messages"; kwargs...)
+    api_call(c, :POST, "/channels/$channel/messages", Message; kwargs...)
 create_reaction(c, channel, message, emoji) =
     api_call(c, :PUT, "/channels/$channel/messages/$message/reactions/$(escapeuri(emoji))/@me")
 delete_reaction(c, channel, message, emoji, user="@me") =
