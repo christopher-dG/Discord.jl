@@ -1,5 +1,7 @@
 module Discord
 
+using Base.Iterators: Pairs
+
 using Dates: DateTime, ISODateTimeFormat
 
 using HTTP: Response, StatusError, escapeuri, header, request

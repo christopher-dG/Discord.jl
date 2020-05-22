@@ -2,7 +2,7 @@
     name::String
     type::ActivityType
     url::String
-    created_at::Int64  # TODO: Can this be made a DateTime?
+    created_at::Union{Int, DateTime}
     timestamps::ActivityTimestamps
     application_id::Snowflake
     details::String

@@ -23,10 +23,9 @@ function delete_webhook(c, webhook, token=nothing; kwargs...)
     end
     return api_call(c, :DELETE, url, Webhook; kwargs...)
 end
-# TODO: Need to handle some stuff here.
-# execute_webhook(c, webhook, token; kwargs...) =
-#     api_call(c, :POST, "/webhooks/$webhook/$token", TODO)
-# execute_webhook_github_(c, webhook, token; kwargs...) =
-#     api_call(c, :POST, "/webhooks/$webhook/$token/github", TODO)
-# execute_webhook_slack(c, webhook, token; kwargs...) =
-#     api_call(c, :POST, "/webhooks/$webhook/$token/slack", TODO)
+execute_webhook(c, webhook, token; wait=true, kwargs...) =
+    api_call(c, :POST, "/webhooks/$webhook/$token", (wait=wait,); kwargs...)
+execute_webhook_github_(c, webhook, token; wait=true, kwargs...) =
+    api_call(c, :POST, "/webhooks/$webhook/$token/github", (wait=wait,); kwargs...)
+execute_webhook_slack(c, webhook, token; wait=true, kwargs...) =
+    api_call(c, :POST, "/webhooks/$webhook/$token/slack", (wait=wait,); kwargs...)

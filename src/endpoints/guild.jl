@@ -12,9 +12,8 @@ get_guild_channels(c, guild) =
     api_call(c, :GET, "/guilds/$guild/channels", Vector{DiscordChannel})
 create_guild_channel(c, guild; kwargs...) =
     api_call(c, :POST, "/guilds/$guild/channels", Guild; kwargs...)
-# TODO: How should we pass an array as the body?
-# update_guild_channel_positions(c, guild; kwargs...) =
-#     api_call(c, :PATCH, "/guilds/$guild/channels", TODO)
+update_guild_channel_positions(c, guild; positions) =
+    api_call(c, :PATCH, "/guilds/$guild/channels"; array=JSONArray(positions))
 get_guild_member(c, guild, user) =
     api_call(c, :GET, "/guilds/$guild/members/$user", GuildMember)
 get_guild_members(c, guild; kwargs...) =
@@ -43,9 +42,8 @@ get_guild_roles(c, guild) =
     api_call(c, :GET, "/guilds/$guild/roles", Vector{Role})
 create_guild_role(c, guild; kwargs...) =
     api_call(c, :POST, "/guilds/$guild/roles", Role; kwargs...)
-# TODO: How should we pass an array as the body?
-# update_guild_role_positions(c, guild; kwargs...) =
-#     api_call(c, :PATCH, "/guilds/$guild/roles", Vector{Role}, TODO)
+update_guild_role_positions(c, guild; positions) =
+    api_call(c, :PATCH, "/guilds/$guild/roles", Vector{Role}; array=JSONArray(positions))
 update_guild_role(c, guild, role; kwargs...) =
     api_call(c, :PATCH, "/guilds/$guild/roles/$role", Role; kwargs...)
 delete_guild_role(c, guild, role) =

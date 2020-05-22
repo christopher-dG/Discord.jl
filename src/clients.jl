@@ -23,11 +23,22 @@ end
 auth_header(c::BotClient) = "Bot $(c.token.token)"
 auth_header(c::BearerClient) = "Bearer $(c.token.token)"
 
-function api_call(c, method, path, Into=Nothing;  kwargs...)
+# A hack to make it easier to pass in an array payload.
+# TODO: This doesn't quite work.
+struct JSONArray{T}
+    xs::T
+end
+const ArrayKwarg =
+    Pairs{Symbol, JSONArray{T}, Tuple{Symbol}, NamedTuple{(:array,), Tuple{JSONArray{T}}}} where T
+Base.iterate(kw::ArrayKwarg) = iterate(kw.data.array.xs)
+Base.iterate(kw::ArrayKwarg, state) = iterate(kw.data.array.xs, state)
+StructTypes.StructType(::Type{<:ArrayKwarg}) = StructTypes.ArrayType()
+
+function api_call(c, method, path, Into=Nothing, params=Dict();  kwargs...)
     headers = ["Authorization" => auth_header(c), "User-Agent" => USER_AGENT]
     body, query = if method in (:PATCH, :PUT, :POST)
         push!(headers, "Content-Type" => "application/json")
-        (isempty(kwargs) ? "" : JSON3.write(kwargs)), Dict()
+        (isempty(kwargs) ? "" : JSON3.write(kwargs)), params
     else
         "", kwargs
     end
@@ -62,9 +73,15 @@ fix_datetimes!(x::Type{<:Vector}) = foreach(fix_datetimes!, x)
 function fix_datetimes!(x::T) where T
     for name in fieldnames(T)
         if DateTime <: fieldtype(T, name)
-            s = getfield(x, name)
-            if s isa String
-                datetime = DateTime(replace(s, "+" => ".000+")[1:23], ISODateTimeFormat)
+            f = getfield(x, name)
+            if f isa String
+                datetime = DateTime(replace(f, "+" => ".000+")[1:23], ISODateTimeFormat)
+                setfield!(x, name, datetime)
+            elseif f isa Int
+                datetime = unix2datetime(f)
+                if year(d) == 1970
+                    datetime = unix2datetime(1000f)
+                end
                 setfield!(x, name, datetime)
             end
         end
