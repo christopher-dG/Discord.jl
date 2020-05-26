@@ -1,6 +1,6 @@
 @discord_object struct DiscordChannel
     id::Snowflake
-    type::ChannelType
+    type::ChannelType.ChannelTypeEnum
     guild_id::Snowflake
     position::Int
     permission_overwrites::Vector{Overwrite}

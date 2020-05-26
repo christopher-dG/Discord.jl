@@ -3,7 +3,7 @@
     changes::Vector{AuditLogChange}
     user_id::Snowflake
     id::Snowflake
-    action_type::AuditLogEvent
+    action_type::AuditLogEvent.AuditLogEventEnum
     options::AuditLogInfo
     reason::String
 end

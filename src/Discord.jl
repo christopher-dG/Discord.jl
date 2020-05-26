@@ -7,6 +7,7 @@ using Dates: DateTime, ISODateTimeFormat, UTC, now, unix2datetime, year
 using HTTP: HTTP, Response, StatusError, escapeuri, header, request
 using JSON3: JSON3, StructTypes
 using Parameters: @with_kw
+using SuperEnum: @se
 
 const API_BASE = "https://discord.com/api"
 const API_VERSION = 6

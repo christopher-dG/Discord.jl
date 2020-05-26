@@ -12,13 +12,13 @@
     afk_timeout::Int
     embed_enabled::Bool
     embed_channel_id::Snowflake
-    verification_level::VerificationLevel
-    default_message_notifications::MessageNotificationsLevel
-    explicit_content_filter::ExplicitContentFilter
+    verification_level::VerificationLevel.VerificationLevelEnum
+    default_message_notifications::MessageNotificationsLevel.MessageNotificationsLevelEnum
+    explicit_content_filter::ExplicitContentFilter.ExplicitContentFilterEnum
     roles::Vector{Role}
     emojis::Vector{Emoji}
     features::Vector{String}
-    mfa_level::MFALevel
+    mfa_level::MFALevel.MFALevelEnum
     application_id::Snowflake
     widget_enabled::Bool
     widget_channel_id::Snowflake
@@ -38,7 +38,7 @@
     vanity_url_code::String
     description::String
     banner::String
-    premium_tier::PremiumTier
+    premium_tier::PremiumTier.PremiumTierEnum
     premium_subscription_count::Int
     preferred_locale::String
     public_updates_channel_id::Snowflake

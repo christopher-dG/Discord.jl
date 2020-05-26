@@ -6,7 +6,7 @@
     syncing::Bool
     role_id::Snowflake
     enable_emoticons::Bool
-    expire_behavior::IntegrationExpireBehavior
+    expire_behavior::IntegrationExpireBehavior.IntegrationExpireBehaviorEnum
     expire_grace_period::Int
     user::User
     account::IntegrationAccount

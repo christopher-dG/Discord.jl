@@ -4,7 +4,7 @@
     channel::DiscordChannel
     inviter::User
     target_user::User
-    target_user_type::TargetUserType
+    target_user_type::TargetUserType.TargetUserTypeEnum
     approximate_presence_count::Int
     approximate_member_count::Int
     # https://discord.com/developers/docs/resources/invite#invite-metadata-object

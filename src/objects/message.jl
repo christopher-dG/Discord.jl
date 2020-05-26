@@ -18,7 +18,7 @@
     nonce::Union{Int, String}
     pinned::Bool
     webhook_id::Snowflake
-    type::MessageType
+    type::MessageType.MessageTypeEnum
     activity::MessageActivity
     application::MessageApplication
     message_reference::MessageReference

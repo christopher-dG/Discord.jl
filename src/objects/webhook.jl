@@ -1,6 +1,6 @@
 @discord_object struct Webhook
     id::Snowflake
-    type::WebhookType
+    type::WebhookType.WebhookTypeEnum
     guild_id::Snowflake
     channel_id::Snowflake
     user::User

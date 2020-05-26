@@ -10,7 +10,7 @@
     verified::Bool
     email::String
     flags::Int
-    premium_type::UserPremiumType
+    premium_type::UserPremiumType.UserPremiumTypeEnum
     public_flags::Int
     # TODO: Add a PartialGuildMember struct or something?
     # https://discord.com/developers/docs/resources/channel#message-object-message-structure

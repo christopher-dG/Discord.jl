@@ -1,6 +1,6 @@
 @discord_object struct Activity
     name::String
-    type::ActivityType
+    type::ActivityType.ActivityTypeEnum
     url::String
     created_at::Union{Int, DateTime}
     timestamps::ActivityTimestamps

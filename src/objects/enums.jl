@@ -1,5 +1,5 @@
 @discord_enum UserPremiumType begin
-    NO_PREMIUM_TYPE = 0
+    NONE = 0
     NITRO_CLASSIC = 1
     NITRO = 2
 end
@@ -10,8 +10,8 @@ end
 end
 
 @discord_enum ConnectionVisibility begin
-    VISIBILITY_NONE = 0
-    VISIBILITY_EVERYONE = 1
+    NONE = 0
+    EVERYONE = 1
 end
 
 @discord_enum ChannelType begin
@@ -25,7 +25,7 @@ end
 end
 
 @discord_enum MessageType begin
-    MESSAGE_TYPE_DEFAULT = 0
+    DEFAULT = 0
     RECIPIENT_ADD = 1
     RECIPIENT_REMOVE = 2
     CALL = 3
@@ -43,14 +43,14 @@ end
 end
 
 @discord_enum MessageActivityType begin
-    TYPE_JOIN = 1
-    TYPE_SPECTATE = 2
-    TYPE_LISTEN = 3
-    TYPE_JOIN_REQUEST = 5
+    JOIN = 1
+    SPECTATE = 2
+    LISTEN = 3
+    JOIN_REQUEST = 5
 end
 
 @discord_enum VerificationLevel begin
-    VERIFICATION_LEVE_NONE = 0
+    NONE = 0
     LOW = 1
     MEDIUM = 2
     HIGH = 3
@@ -63,18 +63,18 @@ end
 end
 
 @discord_enum ExplicitContentFilter begin
-    EXPLICIT_CONTENT_FILTER_DISABLED = 0
+    DISABLED = 0
     MEMBERS_WITHOUT_ROLES = 1
     ALL_MEMBERS = 2
 end
 
 @discord_enum MFALevel begin
-    MFA_LEVEL_NONE = 0
+    NONE = 0
     ELEVATED = 1
 end
 
 @discord_enum PremiumTier begin
-    PREMIUM_TIER_NONE = 0
+    NONE = 0
     TIER_1 = 1
     TIER_2 = 2
     TIER_3 = 3
@@ -135,7 +135,7 @@ end
 end
 
 @discord_enum UserFlags begin
-    USER_FLAGS_NONE = 0
+    NONE = 0
     DISCORD_EMPLOYEE = 1 << 0
     DISCORD_PARTNER = 1 << 1
     HYPESQUAD_EVENTS = 1 << 2
@@ -149,7 +149,7 @@ end
     BUG_HUNTER_2 = 1 << 14
     VERIFIED_BOT = 1 << 16
     VERIFIED_BOT_DEVELOPER = 1 << 17
-end
+end or=true
 
 @discord_enum MessageFlags begin
     CROSSPOSTED = 1 << 0
@@ -157,12 +157,12 @@ end
     SUPPRESS_EMBEDS = 1 << 2
     SOURCE_MESSAGE_DELETED = 1 << 3
     URGENT = 1 << 4
-end
+end or=true
 
 @discord_enum SystemChannelFlags begin
     SUPPRESS_JOIN_NOTIFICATIONS = 1 << 0
     SUPPRESS_PREMIUM_SUBSCRIPTIONS = 1 << 1
-end
+end or=true
 
 @discord_enum ActivityFlags begin
     INSTANCE = 1 << 0
@@ -171,4 +171,4 @@ end
     JOIN_REQUEST = 1 << 3
     SYNC = 1 << 4
     PLAY = 1 << 5
-end
+end or=true

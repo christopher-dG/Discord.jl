@@ -46,12 +46,25 @@ macro discord_object(typedef)
     end
 end
 
-macro discord_enum(name, block)
+macro discord_enum(name, block, kwargs...)
     # TODO: Why do I need to eval here? I want to just insert a macrocall expression.
-    @eval @enum $name $block
+    @eval @se $name $block
+
+    name = Expr(:., name, QuoteNode(Symbol(name, :Enum)))
+
+    extras = Expr(:block)
+    for ex in kwargs
+        k, v = ex.args
+        if k === :or && v === true
+            or = :(Base.:(|)(a::$(esc(name)), b::$(esc(name))) = Int(a) | Int(b))
+            push!(extras.args, or)
+        end
+    end
+
     return quote
         StructTypes.StructType(::Type{$(esc(name))}) = StructTypes.NumberType()
-        StructTypes.numbertype(::Type{$(esc(name))}) = UInt64
+        StructTypes.numbertype(::Type{$(esc(name))}) = Int
+        $extras
     end
 end
 

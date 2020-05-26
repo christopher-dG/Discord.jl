@@ -7,5 +7,5 @@
     verified::Bool
     friend_sync::Bool
     show_activity::Bool
-    visibility::ConnectionVisibility
+    visibility::ConnectionVisibility.ConnectionVisibilityEnum
 end
