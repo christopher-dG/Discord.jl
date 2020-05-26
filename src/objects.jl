@@ -41,6 +41,7 @@ macro discord_object(typedef)
     end
 
     return quote
+        export $name
         $typedef_withkw
         $json_methods
     end
@@ -50,20 +51,24 @@ macro discord_enum(name, block, kwargs...)
     # TODO: Why do I need to eval here? I want to just insert a macrocall expression.
     @eval @se $name $block
 
+    exp = :(export $(esc(name)))
     name = Expr(:., name, QuoteNode(Symbol(name, :Enum)))
 
     extras = Expr(:block)
     for ex in kwargs
         k, v = ex.args
-        if k === :or && v === true
-            or = :(Base.:(|)(a::$(esc(name)), b::$(esc(name))) = Int(a) | Int(b))
-            push!(extras.args, or)
+        if v === true
+            if k === :or
+                or = :(Base.:(|)(a::$(esc(name)), b::$(esc(name))) = Int(a) | Int(b))
+                push!(extras.args, or)
+            end
         end
     end
 
     return quote
         StructTypes.StructType(::Type{$(esc(name))}) = StructTypes.NumberType()
         StructTypes.numbertype(::Type{$(esc(name))}) = Int
+        $exp
         $extras
     end
 end
