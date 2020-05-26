@@ -3,3 +3,12 @@
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://christopher-dG.github.io/Discord.jl/stable)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://christopher-dG.github.io/Discord.jl/dev)
 [![Build Status](https://travis-ci.com/christopher-dG/Discord.jl.svg?branch=master)](https://travis-ci.com/christopher-dG/Discord.jl)
+[![Discord](https://img.shields.io/badge/discord-join-7289da.svg)](https://discord.gg/ng9TjYd)
+
+Write [Discord](https://discord.com) bots in [Julia](https://julialang.org).
+
+### History
+
+[Xh4H](https://github.com/Xh4H) and I previously implemented [another Discord.jl package](https://github.com/Xh4H/Discord.jl), but it was never published in a Julia registry for several reasons.
+This fresh implementation aims to keep things as simple as possible and minimize extra features in order to maximize maintainability as the Discord API changes.
+It also aims to be easily extensible, so that packages providing extra features can be written on top of it.
