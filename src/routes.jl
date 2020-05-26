@@ -70,6 +70,11 @@ function fix_datetimes!(x::T) where T
     end
 end
 
+path_argname(s) = s
+path_argname(s::Symbol) = string("<", s === :emoji_id ? :emoji : s, ">")
+path_argname(ex::Expr) = path_argname(ex.args[1])
+
+
 # TODO: Refactor this to be not huge and ugly.
 macro route(name, method, path, kwargs...)
     if path isa String
@@ -78,6 +83,8 @@ macro route(name, method, path, kwargs...)
 
     # Copy all the interpolations as arguments.
     fun_args = [x isa Expr ? Expr(:kw, x.args...) : x for x in path.args if !(x isa String)]
+    # We'll use this later, but construct it now while `path.args` still makes sense.
+    doc_path = join(map(path_argname, path.args))
 
     # Update the string interpolation arguments to URI-encode them, among some other hacks.
     for (i, arg) in enumerate(path.args)
@@ -110,14 +117,16 @@ macro route(name, method, path, kwargs...)
         done && break
     end
 
-    func = :($name(c, $(fun_args...)) = api_call(c, $(QuoteNode(method)), $path))
+    fun = :($name(client, $(fun_args...)) = api_call(c, $(QuoteNode(method)), $path))
+    pushfirst!(fun.args[2].args, __source__)
 
-    sig_args = func.args[1].args
-    call_args = func.args[2].args[end].args
+    sig_args = fun.args[1].args
+    call_args = fun.args[2].args[end].args
     insert!(sig_args, 2, Expr(:parameters))
     insert!(call_args, 2, Expr(:parameters))
     sig_kws = sig_args[2].args
     call_kws = call_args[2].args
+    Into = :Nothing
     for ex in kwargs
         if ex === :kwargs
             # Add trailing keywords that go into the query parameters or body.
@@ -138,16 +147,26 @@ macro route(name, method, path, kwargs...)
                 end
             end
         else
-            # This is the Into type value.
-            insert!(call_args, 6, ex)
+            Into = ex
         end
     end
+    insert!(call_args, 6, Into)
     isempty(sig_kws) && deleteat!(sig_args, 2)
     isempty(call_kws) && deleteat!(call_args, 2)
 
+    doc_call = replace(string(Expr(:call, sig_args...)), " = " => "=")
+    doc = """
+        $doc_call -> $Into
+
+    Make a $method request to `$doc_path`.
+    See [the Discord API documentation](https://discord.com/developers/docs/resources/$(RESOURCE[]))
+    for more information.
+    """
+
     block = quote
         export $name
-        $func
+        $fun
+        @doc $doc $name
     end
     return esc(block)
 end
@@ -156,10 +175,12 @@ const HasID = Union{Guild, DiscordChannel, User, Message, Overwrite, Role}
 HTTP.escapeuri(x::HasID) = string(x.id)
 HTTP.escapeuri(e::Emoji) = escapeuri(e.name)
 
-# # https://discord.com/developers/docs/resources/audit-log
+const RESOURCE = Ref{String}()
+
+RESOURCE[] = "audit-log"
 @route get_guild_audit_log GET "/guilds/$guild/audit-logs" AuditLog kwargs
 
-# https://discord.com/developers/docs/resources/channel
+RESOURCE[] = "channel"
 @route get_channel GET "/channels/$channel" DiscordChannel kwargs
 @route update_channel PATCH "/channels/$channel" DiscordChannel kwargs
 @route delete_channel DELETE "/channels/$channel" DiscordChannel
@@ -184,14 +205,14 @@ HTTP.escapeuri(e::Emoji) = escapeuri(e.name)
 @route create_group_dm_recipient PUT "/channels/$channel/recipients/$user" kwargs
 @route delete_group_dm_recipient DELETE "/channels/$channel/recipients/$user"
 
-# https://discord.com/developers/docs/resources/emoji
+RESOURCE[] = "emoji"
 @route get_guild_emojis GET "/guilds/$guild/emojis" Vector{Emoji}
 @route get_guild_emoji GET "/guilds/$guild/emojis/$emoji_id" Emoji
 @route create_guild_emoji POST "/guilds/$guild/emojis" Emoji kwargs
 @route update_guild_emoji PATCH "/guilds/$guild/emojis" Emoji kwargs
 @route delete_guild_emoji DELETE "/guilds/$guild/emojis/$emoji_id"
 
-# https://discord.com/developers/docs/resources/guild
+RESOURCE[] = "guild"
 @route create_guild POST "/guilds" Guild kwargs
 @route get_guild GET "/guilds/$guild" Guild kwargs
 @route get_guild_preview GET "/guilds/$guild/preview" Guild
@@ -231,11 +252,11 @@ HTTP.escapeuri(e::Emoji) = escapeuri(e.name)
 @route get_guild_vanity_url GET "/guilds/$guild/vanity-url" Invite
 @route get_guild_widget_image GET "/guilds/$guild/widget.png" String
 
-# https://discord.com/developers/docs/resources/invite
+RESOURCE[] = "invite"
 @route get_invite GET "/invites/$invite" Invite kwargs
 @route delete_invite DELETE "/invites/$invite" Invite
 
-# https://discord.com/developers/docs/resources/user
+RESOURCE[] = "user"
 @route get_user GET "/users/$(user="@me")" User
 @route update_user PATCH "/users/@me" User kwargs
 @route get_user_guilds GET "/users/@me/guilds" Vector{Guild} kwargs
@@ -245,10 +266,10 @@ HTTP.escapeuri(e::Emoji) = escapeuri(e.name)
 @route create_group_dm POST "/users/@me/channels" DiscordChannel kwargs
 @route get_user_connections GET "/users/@me/connections" Vector{Connection}
 
-# https://discord.com/developers/docs/resources/voice
+RESOURCE[] = "voice"
 @route get_voice_regions GET "/voice/regions" Vector{VoiceRegion}
 
-# https://discord.com/developers/docs/resources/webhook
+RESOURCE[] = "webhook"
 @route get_channel_webhooks GET "/channels/$channel/webhooks" Vector{Webhook}
 @route get_guild_webhooks GET "/guilds/$guild/webhooks" Vector{Webhook}
 @route get_webhook GET "/webhooks/$webhook/$(token=nothing)" Webhook
