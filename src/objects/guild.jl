@@ -32,7 +32,7 @@
     voice_states::Vector{VoiceState}
     members::Vector{GuildMember}
     channels::Vector{DiscordChannel}
-    presences::Vector{PresenceUpdate}
+    presences::Vector{Presence}
     max_presences::Int
     max_members::Int
     vanity_url_code::String

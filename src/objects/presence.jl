@@ -1,4 +1,4 @@
-@discord_object struct PresenceUpdate
+@discord_object struct Presence
     user::User
     roles::Vector{Snowflake}
     game::Activity
