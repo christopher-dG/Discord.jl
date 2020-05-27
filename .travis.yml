@@ -10,6 +10,7 @@ os:
   - linux
 arch:
   - x64
+before_script: julia -e 'using Pkg; Pkg.add(PackageSpec(; url="https://github.com/christopher-dG/BrokenRecord.jl"))'
 jobs:
   fast_finish: true
   allow_failures:
