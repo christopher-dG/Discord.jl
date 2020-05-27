@@ -13,5 +13,4 @@
     secrets::ActivitySecrets
     instance::Bool
     flags::Int64
-
 end

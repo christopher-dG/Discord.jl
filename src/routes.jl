@@ -117,7 +117,7 @@ macro route(name, method, path, kwargs...)
         done && break
     end
 
-    fun = :($name(client, $(fun_args...)) = api_call(c, $(QuoteNode(method)), $path))
+    fun = :($name(client, $(fun_args...)) = api_call(client, $(QuoteNode(method)), $path))
     pushfirst!(fun.args[2].args, __source__)
 
     sig_args = fun.args[1].args
@@ -137,7 +137,7 @@ macro route(name, method, path, kwargs...)
             if k === :array
                 # Pass one specific keyword as an array body.
                 pushfirst!(sig_kws, v)
-                pushfirst!(call_kws, Expr(:kw, v, :(ArrayBody($v))))
+                pushfirst!(call_kws, Expr(:kw, :array, :(ArrayBody($v))))
             elseif k === :query
                 # Add query parameters to a request that uses its keywords for the body.
                 tuples = [Expr(:tuple, QuoteNode(t.args[1]), t.args[1]) for t in v.args]
@@ -219,7 +219,7 @@ RESOURCE[] = "guild"
 @route update_guild PATCH "/guilds/$guild" Guild kwargs
 @route delete_guild DELETE "/guilds/$guild"
 @route get_guild_channels GET "/guilds/$guild/channels" Vector{DiscordChannel}
-@route create_guild_channel POST "/guilds/$guild/channels" Guild kwargs
+@route create_guild_channel POST "/guilds/$guild/channels" DiscordChannel kwargs
 @route update_guild_channel_positions PATCH "/guilds/$guild/channels" array=positions
 @route get_guild_member GET "/guilds/$guild/members/$user" GuildMember
 @route get_guild_members GET "/guilds/$guild/members" Vector{GuildMember} kwargs
