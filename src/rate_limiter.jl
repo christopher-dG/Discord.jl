@@ -1,7 +1,8 @@
 const GLOBAL_BUCKET = string(gensym(:global_bucket))
+const RATE_LIMIT_RETRY = gensym(:retry)
 const RATE_LIMIT_SENTINEL = gensym(:rate_limited)
 
-@enum RateLimitHandler THROW WAIT SENTINEL
+@enum RateLimitHandler SENTINEL THROW WAIT
 
 mutable struct Bucket
     limit::Int
@@ -28,9 +29,12 @@ RateLimitedError(reset) = RateLimitedError(reset, nothing)
 
 on_rate_limit(rl::RateLimiter, reset, resp=nothing) =
     on_rate_limit(Val(rl.handler), reset, resp)
-on_rate_limit(::Val{THROW}, reset, resp) = throw(RateLimitedError(reset, resp))
-on_rate_limit(::Val{WAIT}, reset, resp) = sleep(max(Millisecond(0), reset - now(UTC)))
 on_rate_limit(::Val{SENTINEL}, reset, resp) = RATE_LIMIT_SENTINEL
+on_rate_limit(::Val{THROW}, reset, resp) = throw(RateLimitedError(reset, resp))
+function on_rate_limit(::Val{WAIT}, reset, resp)
+    sleep(max(Millisecond(0), reset - now(UTC)))
+    return RATE_LIMIT_RETRY
+end
 
 function getbucket(rl::RateLimiter, path)
     return if haskey(rl.routes, path)

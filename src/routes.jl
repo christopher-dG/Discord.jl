@@ -26,7 +26,10 @@ function api_call(c, method, path, Into=Nothing, params=Dict();  kwargs...)
     end
 
     resp = request(method, url, headers, body; query=query, status_exception=false)
-    if apply_rate_limits!(rate_limiter(c), resp) === RATE_LIMIT_SENTINEL
+    rl_result = apply_rate_limits!(rate_limiter(c), resp)
+    if rl_result === RATE_LIMIT_RETRY
+        return api_call(c, method, path, Into, parms; kwargs...)
+    elseif RATE_LIMIT_SENTINEL
         return RATE_LIMIT_SENTINEL
     end
 
@@ -194,7 +197,7 @@ RESOURCE[] = "channel"
 @route update_message PATCH "/channels/$channel/messages/$message" Message kwargs
 @route delete_message DELETE "/channels/$channel/messages/$message"
 @route delete_messages POST "/channels/$channel/messages/bulk-delete" kwargs
-@route update_channel_permissiosn PUT "/channels/$channel/permissions/$overwrite" kwargs
+@route update_channel_permissions PUT "/channels/$channel/permissions/$overwrite" kwargs
 @route get_channel_invites GET "/channels/$channel/invites" Vector{Invite} kwargs
 @route create_channel_invite POST "/channels/$channel/invites" Invite kwargs
 @route delete_channel_permission DELETE "/channels/$channel/permissions/$overwrite"

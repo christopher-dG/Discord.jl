@@ -2,7 +2,7 @@ module Discord
 
 using Base.Iterators: Pairs
 
-using Dates: DateTime, ISODateTimeFormat, UTC, now, unix2datetime, year
+using Dates: DateTime, ISODateTimeFormat, Millisecond, UTC, now, unix2datetime, year
 
 using HTTP: HTTP, Response, StatusError, escapeuri, header, request
 using JSON3: JSON3, StructTypes
