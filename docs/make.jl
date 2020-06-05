@@ -8,7 +8,7 @@ makedocs(;
     sitename="Discord.jl",
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
-        canonical="https://christopher-dG.github.io/Discord.jl",
+        canonical="https://docs.cdg.dev/Discord.jl",
         assets=String[],
     ),
     pages=[

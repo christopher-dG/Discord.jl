@@ -1,10 +1,15 @@
 # Discord
 
-[![Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://docs.cdg.dev/Discord.jl/dev)
+[![Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://docs.cdg.dev/Discord.jl)
 [![Build Status](https://travis-ci.com/christopher-dG/Discord.jl.svg?branch=master)](https://travis-ci.com/christopher-dG/Discord.jl)
 [![Discord](https://img.shields.io/badge/discord-join-7289da.svg)](https://discord.gg/ng9TjYd)
 
 Write [Discord](https://discord.com) bots in [Julia](https://julialang.org).
+
+### Status
+
+This package is in the early stages.
+Currently, the full REST API is available, but the gateway interface has not been implemented.
 
 ### History
 

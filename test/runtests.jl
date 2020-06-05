@@ -1,4 +1,5 @@
-using Test
+using Dates: DateTime
+using Test: @test, @testset
 
 using BrokenRecord: HTTP, configure!, playback
 using JSON3: JSON3

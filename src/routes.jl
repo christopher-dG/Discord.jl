@@ -7,6 +7,8 @@ JSON3.write(kw::Pairs{Symbol, ArrayBody{T}, Tuple{Symbol}, NamedTuple{(:array,),
     JSON3.write(kw.data.array.xs)
 
 function api_call(c, method, path, Into=Nothing, params=Dict();  kwargs...)
+    @debug "$method $path"
+
     headers = [
         "Authorization" => auth_header(c),
         "User-Agent" => USER_AGENT,
@@ -15,7 +17,7 @@ function api_call(c, method, path, Into=Nothing, params=Dict();  kwargs...)
 
     body, query = if method in (:PATCH, :PUT, :POST)
         push!(headers, "Content-Type" => "application/json")
-        (isempty(kwargs) ? "" : JSON3.write(kwargs)), params
+        JSON3.write(kwargs), params
     else
         "", kwargs
     end
@@ -28,8 +30,8 @@ function api_call(c, method, path, Into=Nothing, params=Dict();  kwargs...)
     resp = request(method, url, headers, body; query=query, status_exception=false)
     rl_result = apply_rate_limits!(rate_limiter(c), resp)
     if rl_result === RATE_LIMIT_RETRY
-        return api_call(c, method, path, Into, parms; kwargs...)
-    elseif RATE_LIMIT_SENTINEL
+        return api_call(c, method, path, Into, params; kwargs...)
+    elseif rl_result === RATE_LIMIT_SENTINEL
         return RATE_LIMIT_SENTINEL
     end
 
@@ -55,7 +57,7 @@ end
 
 # I hate this.
 parse_datetime(s) = DateTime(replace(s, "+" => ".000+")[1:23], ISODateTimeFormat)
-fix_datetimes!(x::Type{<:Vector}) = foreach(fix_datetimes!, x)
+fix_datetimes!(xs::Vector) = foreach(fix_datetimes!, xs)
 function fix_datetimes!(x::T) where T
     for name in fieldnames(T)
         if DateTime <: fieldtype(T, name)
@@ -174,9 +176,10 @@ macro route(name, method, path, kwargs...)
     return esc(block)
 end
 
-const HasID = Union{Guild, DiscordChannel, User, Message, Overwrite, Role}
+const HasID = Union{Guild, DiscordChannel, User, Message, Overwrite, Role, Webhook}
 HTTP.escapeuri(x::HasID) = string(x.id)
 HTTP.escapeuri(e::Emoji) = escapeuri(e.name)
+HTTP.escapeuri(i::Invite) = escapeuri(i.code)
 
 const RESOURCE = Ref{String}()
 
@@ -229,9 +232,9 @@ RESOURCE[] = "guild"
 @route create_guild_member PUT "/guilds/$guild/members/$user" GuildMember kwargs
 @route update_guild_member PATCH "/guilds/$guild/members/$user" kwargs
 @route modify_user_nick PATCH "/guilds/$guild/members/@me/nick" UserNickChange kwargs
-@route create_guild_member_role PUT "/guilds/$guild/users/$user/roles/$role"
-@route delete_guild_member_role DELETE "/guilds/$guild/users/$user/roles/$role"
-@route delete_guild_member DELETE "/guilds/$guild/users/$user"
+@route create_guild_member_role PUT "/guilds/$guild/members/$user/roles/$role"
+@route delete_guild_member_role DELETE "/guilds/$guild/members/$user/roles/$role"
+@route delete_guild_member DELETE "/guilds/$guild/members/$user"
 @route get_guild_bans GET "/guilds/$guild/bans" Vector{Guild}
 @route get_guild_ban GET "/guilds/$guild/bans/$user" Ban
 @route create_guild_ban PUT "/guilds/$guild/bans/$user" kwargs
@@ -273,11 +276,12 @@ RESOURCE[] = "voice"
 @route get_voice_regions GET "/voice/regions" Vector{VoiceRegion}
 
 RESOURCE[] = "webhook"
+@route create_webhook POST "/channels/$channel/webhooks" Webhook kwargs
 @route get_channel_webhooks GET "/channels/$channel/webhooks" Vector{Webhook}
 @route get_guild_webhooks GET "/guilds/$guild/webhooks" Vector{Webhook}
 @route get_webhook GET "/webhooks/$webhook/$(token=nothing)" Webhook
 @route update_webhook PATCH "/webhooks/$webhook/$(token=nothing)" Webhook kwargs
 @route delete_webhook DELETE "/webhooks/$webhook/$(token=nothing)" Webhook kwargs
-@route execute_webhook POST "/webhooks/$webhook/$token" query=(wait=true,) kwargs
-@route execute_webhook_github POST "/webhooks/$webhook/$token/github" query=(wait=true,) kwargs
-@route execute_webhook_slack POST "/webhooks/$webhook/$token/slack" query=(wait=true,) kwargs
+@route execute_webhook POST "/webhooks/$webhook/$token" Message query=(wait=true,) kwargs
+@route execute_webhook_github POST "/webhooks/$webhook/$token/github" Message query=(wait=true,) kwargs
+@route execute_webhook_slack POST "/webhooks/$webhook/$token/slack" Message query=(wait=true,) kwargs

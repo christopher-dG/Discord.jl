@@ -18,7 +18,8 @@ SuperEnum = "0.1"
 julia = "1"
 
 [extras]
+BrokenRecord = "bdd55f5b-6e67-4da1-a080-6086e55655a0"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test"]
+test = ["BrokenRecord", "Test"]
