@@ -15,9 +15,24 @@ function api_call(c, method, path, Into=Nothing, params=Dict();  kwargs...)
         "X-RateLimit-Precision" => "millisecond",
     ]
 
-    body, query = if method in (:PATCH, :PUT, :POST)
-        push!(headers, "Content-Type" => "application/json")
-        JSON3.write(kwargs), params
+    body, query = if method in (:PATCH, :POST, :PUT)
+        if haskey(kwargs, :file)
+            kw_dict = Dict(kwargs)
+            file = pop!(kw_dict, :file)
+            # This is just a hack to allow for easier testing. No user should use this.
+            boundary = NamedTuple()
+            if haskey(kw_dict, :__boundary__)
+                boundary = (; boundary=pop!(kw_dict, :__boundary__))
+            end
+            form = Form(
+                Dict(:file => file, :payload_json => JSON3.write(kw_dict));
+                boundary...,
+            )
+            form, params
+        else
+            push!(headers, "Content-Type" => "application/json")
+            JSON3.write(kwargs), params
+        end
     else
         "", kwargs
     end

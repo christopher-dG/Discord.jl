@@ -159,3 +159,26 @@ const client = D.BotClient(get(ENV, "DISCORD_TOKEN", ""))
         end
     end
 end
+
+@testset "Sending files" begin
+    playback("files.bson") do
+        guild = D.create_guild(client; name="MyGuild")
+        try
+            channel = D.create_guild_channel(client, guild; name="test")
+            msg = mktempdir() do dir
+                file = joinpath(dir, "foo.json")
+                write(file, "{}")
+                open(file) do f
+                    D.create_message(client, channel; file=f, __boundary__="abcdef")
+                end
+            end
+            attachments = msg.attachments
+            @test length(attachments) == 1
+            attachment = attachments[1]
+            @test attachment.filename == "foo.json"
+            @test attachment.size == 2
+        finally
+            D.delete_guild(client, guild)
+        end
+    end
+end
