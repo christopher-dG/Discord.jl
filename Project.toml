@@ -11,7 +11,7 @@ Parameters = "d96e819e-fc66-5662-9728-84c9c7592b0a"
 SuperEnum = "5c958174-e7d9-5990-9618-4567de4ba542"
 
 [compat]
-HTTP = "0.9"
+HTTP = "0.9, 0.8"
 JSON3 = "1"
 Parameters = "0.12"
 SuperEnum = "0.1"
