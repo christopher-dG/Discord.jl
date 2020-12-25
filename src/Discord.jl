@@ -10,7 +10,7 @@ using Parameters: @with_kw
 using SuperEnum: @se
 
 const API_BASE = "https://discord.com/api"
-const API_VERSION = 6
+const API_VERSION = 8
 const USER_AGENT = let
     toml = read(joinpath(@__DIR__, "..", "Project.toml"), String)
     version = VersionNumber(match(r"version = \"(.*)\"", toml)[1])
