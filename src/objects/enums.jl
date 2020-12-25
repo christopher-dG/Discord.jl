@@ -40,6 +40,7 @@ end
     CHANNEL_FOLLOW_ADD = 12
     GUILD_DISCOVERY_DISQUALIFIED = 14
     GUILD_DISCOVERY_REQUALIFIED = 15
+    REPLY = 19
 end
 
 @discord_enum MessageActivityType begin

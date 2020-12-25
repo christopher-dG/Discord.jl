@@ -23,4 +23,5 @@
     application::MessageApplication
     message_reference::MessageReference
     message_flags::Int
+    referenced_message::Message
 end
