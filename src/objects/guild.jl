@@ -6,7 +6,7 @@
     discovery_splash::String
     owner::Bool
     owner_id::Snowflake
-    permissions::Int64
+    permissions::String
     region::String
     afk_channel_id::Snowflake
     afk_timeout::Int

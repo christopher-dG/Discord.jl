@@ -1,0 +1,70 @@
+responses:
+  - headers:
+      - Date: "Fri, 25 Dec 2020 19:29:56 GMT"
+      - Content-Type: "application/json"
+      - Transfer-Encoding: "chunked"
+      - Connection: "keep-alive"
+      - Set-Cookie: "__cfduid=dfd90a7a9512c13d7cba2f85db7d0f6e41608924596; expires=Sun, 24-Jan-21 19:29:56 GMT; path=/; domain=.discord.com; HttpOnly; SameSite=Lax; Secure"
+      - strict-transport-security: "max-age=31536000; includeSubDomains; preload"
+      - x-envoy-upstream-service-time: "39"
+      - Via: "1.1 google"
+      - CF-Cache-Status: "DYNAMIC"
+      - cf-request-id: "073cfa1fab00003fcd36b57000000001"
+      - Expect-CT: |-
+          max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      - Report-To: |-
+          {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report?s=xwx0vSLQrRyXUAwjsrWyqEDTr7Rsue5r8jASLnxCdDnABG%2F6N00DiOX1%2BDMRLpBaPVL8c6IR8wb0pDJqHcLt%2BYZLOu6SQNBDDS82lA%3D%3D"}],"group":"cf-nel","max_age":604800}
+      - NEL: |-
+          {"report_to":"cf-nel","max_age":604800}
+      - X-Content-Type-Options: "nosniff"
+      - Server: "cloudflare"
+      - CF-RAY: "6074f945df483fcd-YYZ"
+    body: |-
+      {"id": "792111908836081704", "name": "MyGuild", "icon": null, "description": null, "splash": null, "discovery_splash": null, "features": [], "emojis": [], "banner": null, "owner_id": "646923378912919574", "application_id": "646923378912919574", "region": "us-central", "afk_channel_id": null, "afk_timeout": 300, "system_channel_id": "792111908836081707", "widget_enabled": false, "widget_channel_id": null, "verification_level": 0, "roles": [{"id": "792111908836081704", "name": "@everyone", "permissions": "104320577", "position": 0, "color": 0, "hoist": false, "managed": false, "mentionable": false}], "default_message_notifications": 0, "mfa_level": 0, "explicit_content_filter": 0, "max_presences": null, "max_members": 100000, "max_video_channel_users": 25, "vanity_url_code": null, "premium_tier": 0, "premium_subscription_count": 0, "system_channel_flags": 0, "preferred_locale": "en-US", "rules_channel_id": null, "public_updates_channel_id": null}
+    status: 200
+    request:
+      txcount: 1
+      headers:
+        - X-RateLimit-Precision: "millisecond"
+        - Host: "discord.com"
+        - Content-Length: "0"
+      body: ""
+      method: "GET"
+      target: "/api/v8/guilds/792111908836081704"
+      version: "1.1.0"
+    version: "1.1.0"
+  - headers:
+      - Date: "Fri, 25 Dec 2020 19:29:56 GMT"
+      - Content-Type: "application/json"
+      - Transfer-Encoding: "chunked"
+      - Connection: "keep-alive"
+      - Set-Cookie: "__cfduid=dfd90a7a9512c13d7cba2f85db7d0f6e41608924596; expires=Sun, 24-Jan-21 19:29:56 GMT; path=/; domain=.discord.com; HttpOnly; SameSite=Lax; Secure"
+      - strict-transport-security: "max-age=31536000; includeSubDomains; preload"
+      - x-envoy-upstream-service-time: "27"
+      - Via: "1.1 google"
+      - CF-Cache-Status: "DYNAMIC"
+      - cf-request-id: "073cfa203200003fcdc09b7000000001"
+      - Expect-CT: |-
+          max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      - Report-To: |-
+          {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report?s=SDdw0b87Q9xkK4aNLmHC4RxguR5ug6SeU7EgIuH6XsjDTYoxHcI%2BoRMQ%2FDoyrbNk%2Bn2KiT1%2FaHSLLrtq2WAwOr43pv7QwvavP9386Q%3D%3D"}],"group":"cf-nel","max_age":604800}
+      - NEL: |-
+          {"report_to":"cf-nel","max_age":604800}
+      - X-Content-Type-Options: "nosniff"
+      - Server: "cloudflare"
+      - CF-RAY: "6074f946b86a3fcd-YYZ"
+    body: |-
+      {"id": "792111908836081704", "name": "MyGuild", "icon": null, "description": null, "splash": null, "discovery_splash": null, "features": [], "emojis": [], "banner": null, "owner_id": "646923378912919574", "application_id": "646923378912919574", "region": "us-central", "afk_channel_id": null, "afk_timeout": 300, "system_channel_id": "792111908836081707", "widget_enabled": false, "widget_channel_id": null, "verification_level": 0, "roles": [{"id": "792111908836081704", "name": "@everyone", "permissions": "104320577", "position": 0, "color": 0, "hoist": false, "managed": false, "mentionable": false}], "default_message_notifications": 0, "mfa_level": 0, "explicit_content_filter": 0, "max_presences": null, "max_members": 100000, "max_video_channel_users": 25, "vanity_url_code": null, "premium_tier": 0, "premium_subscription_count": 0, "system_channel_flags": 0, "preferred_locale": "en-US", "rules_channel_id": null, "public_updates_channel_id": null}
+    status: 200
+    request:
+      txcount: 1
+      headers:
+        - X-RateLimit-Precision: "millisecond"
+        - Host: "discord.com"
+        - Content-Length: "0"
+      body: ""
+      method: "GET"
+      target: "/api/v8/guilds/792111908836081704"
+      version: "1.1.0"
+    version: "1.1.0"
+format: "1.0.0"
